@@ -1,1 +1,219 @@
-<h1>Coming soon</h1> 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Casino Bonus Comparison | BonusScope</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #151f32;
+      --border: #2c3a51;
+      --text: #f1f5f9;
+      --muted: #a8b8cd;
+      --accent: #53e0b0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, Arial, sans-serif;
+      line-height: 1.6;
+    }
+    .container {
+      width: min(1080px, 92%);
+      margin: auto;
+    }
+    header { padding: 28px 0; border-bottom: 1px solid var(--border); }
+    .logo { color: var(--accent); font-size: 23px; font-weight: 800; }
+    .hero { padding: 55px 0 35px; }
+    .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2px; }
+    h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.15; margin: 12px 0; }
+    p { color: var(--muted); }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px 0 30px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      background: #202e44;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    th, td { padding: 21px 17px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-weight: 700; }
+    .bonus { color: var(--accent); font-weight: 700; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .pill {
+      display: inline-block;
+      border: 1px solid #396457;
+      background: #19372e;
+      border-radius: 30px;
+      padding: 3px 10px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .note {
+      border-left: 3px solid var(--accent);
+      padding: 12px 18px;
+      background: #142338;
+      border-radius: 5px;
+      margin-bottom: 40px;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 25px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media(max-width: 700px) {
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      tr { padding: 12px 0; border-bottom: 1px solid var(--border); }
+      tr:last-child { border-bottom: 0; }
+      td {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 9px 17px;
+        border: 0;
+        overflow-wrap: anywhere;
+        text-align: right;
+      }
+      td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--muted);
+        text-align: left;
+        flex: 0 0 38%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container logo">◆ BonusScope</div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">AI-POWERED BONUS DATA</div>
+      <h1>Casino bonuses.<br>Clearly compared.</h1>
+      <p>Three casino welcome offers extracted from one public source
+         using Python and structured with Google Gemini.</p>
+      <span class="pill">● Automated JSON extraction</span>
+    </section>
+
+    <section class="panel">
+      <table aria-label="Casino bonus comparison">
+        <thead>
+          <tr>
+            <th>Casino</th>
+            <th>Welcome bonus</th>
+            <th>Wagering</th>
+            <th>Minimum deposit</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="bonus-data">
+          <tr><td colspan="5">Loading casino bonuses...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="note">
+      <strong>Data transparency</strong>
+      <p>Information is extracted from a third-party comparison article.
+         Offers may change. Wagering conditions can differ between
+         casino and sports bonuses. Always consult the operator's
+         current terms before relying on an offer.</p>
+      <p id="updated">Loading source information...</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      BonusScope | Technical screening project | Data powered by Python + Gemini
+    </div>
+  </footer>
+
+  <script>
+    const tbody = document.getElementById("bonus-data");
+
+    function cell(label, value, className = "") {
+      const td = document.createElement("td");
+      td.dataset.label = label;
+      td.textContent = value ?? "Not specified";
+      if (className) td.className = className;
+      return td;
+    }
+
+    async function loadBonuses() {
+      try {
+        const response = await fetch("./bonuses.json", { cache: "no-store" });
+        if (!response.ok) throw new Error("JSON request failed");
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length !== 3) {
+          throw new Error("Expected three casino records");
+        }
+
+        tbody.replaceChildren();
+
+        data.forEach(item => {
+          const tr = document.createElement("tr");
+          tr.appendChild(cell("Casino", item.casino));
+          tr.appendChild(cell("Welcome bonus", item.welcome_bonus, "bonus"));
+
+          const wagering = item.wagering_multiplier == null
+            ? "Not specified"
+            : `${item.wagering_multiplier}x`;
+
+          tr.appendChild(cell("Wagering", wagering));
+          tr.appendChild(cell("Minimum deposit", item.minimum_deposit));
+
+          const sourceCell = document.createElement("td");
+          sourceCell.dataset.label = "Source";
+          const link = document.createElement("a");
+          const url = new URL(item.source_url);
+          if (url.protocol !== "https:") throw new Error("Unsafe source URL");
+          link.href = url.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "View source ↗";
+          sourceCell.appendChild(link);
+          tr.appendChild(sourceCell);
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("updated").textContent =
+          "Showing " + data.length + " records from the generated JSON file.";
+      } catch (error) {
+        tbody.replaceChildren();
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.textContent = "Unable to load bonus data. Please try again later.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        document.getElementById("updated").textContent =
+          "Data could not be loaded.";
+        console.error(error);
+      }
+    }
+
+    loadBonuses();
+  </script>
+</body>
+</html>
+
