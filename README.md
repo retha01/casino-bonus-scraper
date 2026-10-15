@@ -1,36 +1,35 @@
-# casino-bonus-scraper
-Working task.
-### Development Time
 
-**Total active development time:** [Insert actual hours and minutes]
+# Casino Bonus Comparison
 
-The project was completed as a time-boxed technical assessment. Active development time includes environment setup, source research, scraper implementation, AI integration, testing, website deployment and documentation.
+A Python-based casino bonus scraper and responsive comparison website
+developed for a time-boxed web developer technical assessment.
 
-Breaks and periods when no project work was undertaken are excluded.
+## Project Overview
 
+The application automatically extracts welcome bonus information for
+three online casinos from one publicly accessible comparison article.
 
-# BonusScope - AI Casino Bonus Scraper
+Google Gemini processes the unstructured bonus descriptions and
+converts them into structured JSON. A responsive webpage reads the
+generated JSON file and displays the results in a comparison table.
 
-A Python scraper and responsive web page built for a
-time-boxed technical screening assessment.
+## Data Source
 
-## Overview
-
-The application extracts welcome bonus information for
-three online casinos from one publicly accessible comparison
-article. Google Gemini converts unstructured promotional text
-into structured JSON. The website displays the generated data.
-
-## Source
-
+Source:
 https://ibets.co.za/guides-and-tips/new-online-casinos-south-africa/
 
-Casinos:
+Casinos included:
 - Carousel Casino
 - Virgin Bet
 - Bettabets
 
-## Technology
+Extracted fields:
+- Welcome bonus
+- Wagering multiplier
+- Minimum deposit
+- Source URL
+
+## Technology Stack
 
 - Python 3
 - Requests
@@ -39,57 +38,89 @@ Casinos:
 - HTML, CSS and JavaScript
 - GitHub Pages
 
-## Installation
+## Installation and Setup
 
-1. Clone the repository.
-2. Open a terminal in the repository folder.
-3. Install dependencies:
+Clone the repository:
 
-   python -m pip install -r requirements.txt
+```bash
+git clone https://github.com/retha01/casino-bonus-scraper.git
+cd casino-bonus-scraper
+```
 
-4. Create a .env file containing:
+Install the dependencies:
 
-   GEMINI_API_KEY=your_api_key_here
+```bash
+python -m pip install -r requirements.txt
+```
 
-5. Run the scraper:
+Create a `.env` file in the project root and add:
 
-   python -m scraper.scrape
+```env
+GEMINI_API_KEY=your_api_key_here
+```
 
-The script checks robots.txt, fetches the public article,
-extracts the casino text, calls Gemini and generates
-docs/bonuses.json.
+The API key is excluded from version control.
 
-## Website
+## Run the Scraper
 
-The website is hosted using GitHub Pages from the /docs folder.
+Execute the following command:
+
+```bash
+python -m scraper.scrape
+```
+
+The scraper:
+
+1. Checks the source website's robots.txt permissions.
+2. Downloads the public comparison article.
+3. Extracts the relevant casino bonus descriptions.
+4. Uses Google Gemini to structure the extracted data.
+5. Saves three records to `docs/bonuses.json`.
+
+## Live Website
 
 https://retha01.github.io/casino-bonus-scraper/
 
-For local testing, run:
+The webpage reads the generated JSON file and displays the casino
+offers in a responsive comparison table.
 
-   python -m http.server 8000 --directory docs
+To test locally:
 
-Then open http://localhost:8000
+```bash
+python -m http.server 8000 --directory docs
+```
 
-## Limitations
+Open http://localhost:8000 in your browser.
 
-- Data accuracy depends on the source article.
-- Offers may change without notice.
-- Sports rollover and casino wagering requirements may differ.
-- Unavailable values should be reported as null rather
-  than invented.
-- The website displays the most recently generated JSON.
-  It does not run the scraper automatically.
-- API access requires available Gemini quota.
+## Data Validation and Limitations
+
+The information comes from a third-party comparison article and
+may differ from the casino operators' latest offers.
+
+Sports betting rollover requirements are not treated as casino
+wagering requirements. Where the source does not establish a
+casino wagering multiplier, the value is recorded as null.
+
+The website displays the latest generated JSON file.
+Scraper execution is currently manual rather than scheduled.
+
+Gemini API access requires a valid API key and sufficient quota.
 
 ## Responsible Scraping
 
-The script checks robots.txt before retrieving the page.
-It does not bypass logins, CAPTCHAs or access restrictions.
+The scraper checks robots.txt and does not bypass
+authentication, CAPTCHAs or website access restrictions.
+
+## Additional Documentation
+
+- [Production Scaling Plan](PRODUCTION_PLAN.md)
+- [AI Usage](AI_USAGE.md)
+- [Development Notes](NOTES.md)
 
 ## Development Time
 
-Actual active development time: [ENTER ACTUAL TIME]
+Actual active development time: To be confirmed at completion.
 
-Incomplete items at the three-hour limit:
-[ENTER ANY UNFINISHED ITEMS OR WRITE NONE]
+The assessment is limited to three hours of active work.
+Any incomplete requirements at the time limit will be disclosed
+in the final submission.
